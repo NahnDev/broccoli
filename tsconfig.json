@@ -18,6 +18,7 @@
       }
     ],
     "paths": {
+      "@builder/*": ["./src/libs/builder/*"],
       "@/*": ["./src/*"]
     }
   },
