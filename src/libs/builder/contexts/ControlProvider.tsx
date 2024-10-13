@@ -1,21 +1,20 @@
-import { useCallback, useMemo, useState } from "react";
+import { PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { ControlInterface } from "../types/control";
 import { Layout } from "react-grid-layout";
 import { ControlContext, ControlContextActions } from "./ControlContext";
-import Control from "../classes/Control";
+import ControlFn from "../utils/ControlFn";
 
-export default function ControlProvider() {
+export default function ControlProvider(props: PropsWithChildren) {
+  const [selected, setSelected] = useState<ControlInterface["id"]>();
   const [controls, setControls] = useState<ControlInterface[]>([]);
-  const layouts = useMemo<Layout[]>(() => controls.map((control) => Control.getLayout(control)), [controls]);
+  const layouts = useMemo<Layout[]>(() => controls.map((control) => ControlFn.getLayout(control)), [controls]);
 
-  const set = useCallback<ControlContextActions["set"]>(
+  const add = useCallback<ControlContextActions["add"]>(
     (item) => {
-      return controls.reduce((sum, control) => {
-        if (control.id === item.id) {
-          return [...sum, item];
-        }
-        return [...sum, control];
-      }, [] as ControlInterface[]);
+      const nextControls = [item, ...controls.filter((control) => control.id !== item.id)];
+      console.log("nextControls", nextControls);
+      setControls(nextControls);
+      setSelected(item.id);
     },
     [controls]
   );
@@ -32,7 +31,7 @@ export default function ControlProvider() {
       const nextControls = controls.reduce((sum, control) => {
         const layout = layouts.find((item) => item.i === control.id);
         if (layout) {
-          return [...sum, Control.setLayout(control, layout)];
+          return [...sum, ControlFn.setLayout(control, layout)];
         }
         return [...sum, control];
       }, [] as ControlInterface[]);
@@ -41,5 +40,9 @@ export default function ControlProvider() {
     [controls]
   );
 
-  return <ControlContext.Provider value={{ controls, layouts, set, remove, setLayouts }} />;
+  return (
+    <ControlContext.Provider value={{ controls, layouts, add, remove, setLayouts, selected, setSelected }}>
+      {props.children}
+    </ControlContext.Provider>
+  );
 }

@@ -30,9 +30,12 @@ export default function Home() {
   return (
     <DndProvider backend={HTML5Backend} options={{ enableMouseEvents: true }}>
       <LayoutProvider>
-        <div className="grid grid-cols-1fr-auto w-screen h-screen overflow-hidden">
+        <div className="grid grid-cols-1fr-auto w-screen h-screen overflow-hidden bg-slate-400">
           <BuilderProvider>
-            <Builder />
+            <div className="grid grid-rows-2 gap-2">
+              <Builder />
+              <Builder />
+            </div>
           </BuilderProvider>
           <Sidebar name="left" init={leftPopups} />
         </div>

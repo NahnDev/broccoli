@@ -3,14 +3,13 @@
 import "./styles/react-grid-layout.scss";
 import React, { useMemo, useRef } from "react";
 import ReactGridLayout, { WidthProvider } from "react-grid-layout";
-import Control from "../classes/Control";
+import ControlFn from "../utils/ControlFn";
 import { useDragLayer } from "react-dnd";
 import ControlWrapper from "../control/ControlWrapper";
 import clsx from "clsx";
 import useControls from "../hooks/useControls";
 import { useLayouts } from "../hooks/useLayouts";
 import { ControlBuilder } from "../utils/ControlBuilder";
-import useControlSelected from "../hooks/useControlSelected";
 import { DndTypes } from "../constants/dnd";
 
 const GridLayout = WidthProvider(ReactGridLayout);
@@ -34,8 +33,6 @@ export function Board() {
   const [controls, { set: setControl }] = useControls();
   const [layouts, setLayouts] = useLayouts();
 
-  const [, setSelected] = useControlSelected();
-
   const handleLayoutChange = (layouts: ReactGridLayout.Layout[]) => {
     if (isDragging) return;
     setLayouts(layouts);
@@ -43,9 +40,8 @@ export function Board() {
 
   const handleDrop = (layouts: ReactGridLayout.Layout[], layout: ReactGridLayout.Layout) => {
     if (item) {
-      setControl(Control.setLayout(item, layout));
-      setLayouts(layouts);
-      setSelected(item["id"]);
+      console.log("item", item);
+      setControl(ControlFn.setLayout(item, layout), layouts);
     }
   };
 
@@ -65,7 +61,7 @@ export function Board() {
         isDraggable={!isDragging}
         isResizable={!isDragging}
         resizeHandles={["se", "ne", "sw", "nw"]}
-        droppingItem={item ? Control.getLayout(item) : undefined}
+        droppingItem={item ? ControlFn.getLayout(item) : undefined}
         onDrop={handleDrop}
         onLayoutChange={handleLayoutChange}
         compactType={"vertical"}

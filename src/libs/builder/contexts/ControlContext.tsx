@@ -8,16 +8,32 @@ export type ControlContextValue = {
 };
 
 export type ControlContextActions = {
-  set: (item: ControlInterface) => void;
+  add: (item: ControlInterface, layouts: Layout[]) => void;
   remove: (item: ControlInterface) => void;
 
   setLayouts: (layouts: Layout[]) => void;
 };
 
-export const ControlContext = createContext<ControlContextValue & ControlContextActions>({
+export type SelectContextValue = {
+  selected?: ControlInterface["id"];
+};
+
+export type SelectContextActions = {
+  setSelected: (id: ControlInterface["id"]) => void;
+};
+
+export type ControlContextType = ControlContextValue &
+  ControlContextActions &
+  SelectContextValue &
+  SelectContextActions;
+
+export const ControlContext = createContext<ControlContextType>({
   controls: [],
   layouts: [],
-  set: () => {},
+  add: () => {},
   remove: () => {},
   setLayouts: () => {},
+
+  selected: undefined,
+  setSelected: () => {},
 });

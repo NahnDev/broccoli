@@ -1,7 +1,7 @@
 import { ControlInterface } from "../types/control";
 import ReactGridLayout from "react-grid-layout";
 
-export default class Control {
+export default class ControlFn {
   public static getLayout(item: ControlInterface): ReactGridLayout.Layout {
     return {
       i: item.id,
