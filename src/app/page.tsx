@@ -1,10 +1,11 @@
 "use client";
 
 import { PopupDefinition as PopupDefinition } from "@/libs/layout/types/PopupDefinition";
-import Builder from "@builder/Builder";
 import { LayoutProvider, Sidebar } from "@/libs/layout";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { BuilderProvider, Builder } from "@/libs/builder";
+import { BuilderUI } from "@builder/builder-ui";
 
 export enum PopupTypes {
   UI = "ui",
@@ -15,7 +16,7 @@ export enum PopupTypes {
 }
 
 export const leftPopups: PopupDefinition[] = [
-  { name: PopupTypes.UI, render: () => <div>UI</div>, header: "UI Components" },
+  { name: PopupTypes.UI, render: () => <BuilderUI />, header: "UI Components" },
   { name: PopupTypes.Data, render: () => <div>Data</div>, header: "Data Components" },
 ];
 
@@ -30,7 +31,9 @@ export default function Home() {
     <DndProvider backend={HTML5Backend} options={{ enableMouseEvents: true }}>
       <LayoutProvider>
         <div className="grid grid-cols-1fr-auto w-screen h-screen overflow-hidden">
-          <Builder />
+          <BuilderProvider>
+            <Builder />
+          </BuilderProvider>
           <Sidebar name="left" init={leftPopups} />
         </div>
       </LayoutProvider>

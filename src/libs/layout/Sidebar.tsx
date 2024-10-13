@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { useSidebarComponents, useSidebarHandlers } from "./contexts/SidebarHooks";
 
 export type SidebarProps = {
+  hidden?: boolean;
   init?: PopupDefinition[];
   name: string;
   horizontal?: boolean;
@@ -21,7 +22,11 @@ export function Sidebar(props: SidebarProps) {
 
   return (
     <div
-      className={clsx(["relative bg-slate-50 grid", props.horizontal ? "grid-cols-auto-1fr" : "grid-rows-auto-1fr"])}
+      className={clsx([
+        "relative bg-slate-50 grid",
+        props.horizontal ? "grid-cols-auto-1fr" : "grid-rows-auto-1fr",
+        props.hidden && "w-0 overflow-hidden",
+      ])}
     >
       <DropableZone onDrop={onDrop} horizontal={props.horizontal} />
       <div className="grid  border-2 border-slate-100 rounded-sm">
@@ -50,7 +55,7 @@ function DropableZone(props: { horizontal?: boolean; onDrop: (item: any) => void
 
   return (
     <div>
-      <div ref={dropRef as any} className={clsx(["marker -z-0"])}></div>
+      <div ref={dropRef as any} className={clsx(["marker -z-0", isOver && "border-2 border-cyan-700"])}></div>
       {isOver &&
         (props.horizontal ? <div className="h-80 w-0 max-w-0"></div> : <div className="w-80  h-0 max-h-0"></div>)}
     </div>
