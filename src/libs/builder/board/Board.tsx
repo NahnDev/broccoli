@@ -11,6 +11,7 @@ import useControls from "../hooks/useControls";
 import { useLayouts } from "../hooks/useLayouts";
 import { ControlBuilder } from "../utils/ControlBuilder";
 import { DndTypes } from "../constants/dnd";
+import { CustomDragLayer } from "./CustomDragLayer";
 
 const GridLayout = WidthProvider(ReactGridLayout);
 
@@ -51,14 +52,15 @@ export function Board() {
       ref={ref}
       className={clsx(["relative mx-auto bg-white bg-red w-[56em] min-h-full rounded-md overflow-hidden", "p-4"])}
     >
+      {/* <CustomDragLayer /> */}
       <GridLayout
         layout={layouts}
-        cols={1}
+        cols={2}
         rowHeight={50}
         margin={[2, 2]}
         containerPadding={[10, 10]}
         isDroppable={isDragging}
-        isDraggable={!isDragging}
+        isDraggable={false}
         isResizable={!isDragging}
         resizeHandles={["se", "ne", "sw", "nw"]}
         droppingItem={item ? ControlFn.getLayout(item) : undefined}

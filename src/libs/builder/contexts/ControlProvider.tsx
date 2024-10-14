@@ -21,7 +21,8 @@ export default function ControlProvider(props: PropsWithChildren) {
 
   const remove = useCallback<ControlContextActions["remove"]>(
     (item) => {
-      return controls.filter((control) => control.id !== item.id);
+      const nextControls = controls.filter((control) => control.id !== item.id);
+      setControls(nextControls);
     },
     [controls]
   );

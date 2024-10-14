@@ -34,7 +34,7 @@ export default function Home() {
           <BuilderProvider>
             <div className="grid grid-rows-2 gap-2">
               <Builder />
-              <Builder />
+              {/* <Builder /> */}
             </div>
           </BuilderProvider>
           <Sidebar name="left" init={leftPopups} />
