@@ -25,7 +25,8 @@
     "react-hotkeys-hook": "^4.5.1",
     "react-use": "^17.5.1",
     "sass": "^1.79.5",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -11,6 +11,8 @@ import { CSS } from "@dnd-kit/utilities";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { useDndMonitor } from "@dnd-kit/core";
 import { DndTypes } from "./constants";
+import useDrop from "@/libs/dnd/useDndDrop";
+import useDragEnd from "@/libs/dnd/useDragEnd";
 
 export type PopupProps = {
   item: PopupDefinition;
@@ -21,6 +23,7 @@ export function Popup(props: PopupProps) {
   const isFloating = usePopupPosition(props.item.name) === PopupPosition.Floating;
   const expand = usePopupShown(props.item.name);
   const coord = usePopupCoord(props.item.name);
+
   const { setCoord, setPosition, hide, show } = usePopupHandler(props.item.name);
   const { isDragging, setNodeRef, attributes, listeners, transform, activeNodeRect } = useDragPopup(props.item);
 
@@ -28,10 +31,10 @@ export function Popup(props: PopupProps) {
   const horizontal = useMemo(() => props.horizontal && !isFloating, [props.horizontal, isFloating]);
   const style = useMemo(() => ({ transform: CSS.Translate.toString(transform) }), [transform]);
 
-  useDndMonitor({
-    onDragEnd(event) {
+  useDragEnd({
+    key: props.item.name,
+    onDragEnd(data, event) {
       if (!activeNodeRect) return;
-      if (event.active.id !== props.item.name) return;
       if (event.over?.data.current?.type === DndTypes.Sidebar) {
         setPosition(PopupPosition.Relative);
       } else {
@@ -42,16 +45,16 @@ export function Popup(props: PopupProps) {
   });
 
   return (
-    <div className={clsx([isDragging && "w-0 h-0 z-50"])}>
-      <div
-        style={isFloating ? { ...coord } : {}}
-        className={clsx([
-          isFloating && "fixed",
-          expand && !isFloating ? "h-full" : "h-min",
-          expand && horizontal ? "w-full" : "w-min",
-        ])}
-      >
-        <div className={clsx("bg-white", isFloating && "rounded-md")} {...attributes} style={style}>
+    <div
+      className={clsx([
+        "grid",
+        isDragging && "h-0 z-50",
+        expand && !isFloating ? "h-full" : "h-min",
+        expand && horizontal ? "w-full" : "w-min",
+      ])}
+    >
+      <div className={clsx("grid", isFloating && "fixed")} style={isFloating ? { ...coord } : {}}>
+        <div className={clsx("bg-white", isFloating && "rounded-md")} {...attributes} style={style} draggable>
           <div className={clsx(["flex flex-col", horizontal ? "h-80" : "w-80"])}>
             <PopupTitle
               ref={setNodeRef}
@@ -63,7 +66,7 @@ export function Popup(props: PopupProps) {
               onCompressClick={() => setPosition(PopupPosition.Relative)}
               listeners={listeners}
             />
-            {expand && <div className="flex-1 overflow-y-auto overflow-x-hidden">{children}</div>}
+            {expand && <div className="flex-1">{children}</div>}
           </div>
         </div>
       </div>
@@ -94,7 +97,7 @@ const PopupTitle = forwardRef(function PopupTitle(props: PopupTitleProps, ref: R
       ])}
       onClick={props.onClick}
     >
-      <div className={clsx(["relative ", "flex-1 flex flex-row items-center gap-2", " p-2"])}>
+      <div className={clsx(["relative ", "flex-1 flex flex-row items-center gap-2", " p-2 pl-4"])}>
         <div ref={ref} className={clsx("cursor-pointer overlay")} {...props.listeners} />
         {props.horizontal ? (
           <FontAwesomeIcon className={clsx([expand && "rotate-180", "text-xs"])} icon={faChevronDown} />

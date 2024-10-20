@@ -4,7 +4,7 @@ import Thumbnail from "./Thumbnail";
 
 export function BuilderUI() {
   return (
-    <div className=" rounded-none">
+    <div className="rounded-none p-2">
       <div className="p-0">
         {GROUPS.map((group, index) => {
           return (
@@ -18,6 +18,7 @@ export function BuilderUI() {
             </div>
           );
         })}
+        <div draggable>Dragg noraml</div>
       </div>
     </div>
   );

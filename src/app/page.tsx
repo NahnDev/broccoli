@@ -2,11 +2,9 @@
 
 import { PopupDefinition as PopupDefinition } from "@/libs/layout/types/PopupDefinition";
 import { LayoutProvider, Sidebar } from "@/libs/layout";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { BuilderProvider, Builder } from "@/libs/builder";
 import { BuilderUI } from "@builder/builder-ui";
-import { DndContext } from "@dnd-kit/core";
+import { BuilderProvider } from "@/libs/builder/BuilderProvider";
+import { Builder } from "@/libs/builder/Builder";
 
 export enum PopupTypes {
   UI = "ui",
@@ -17,7 +15,7 @@ export enum PopupTypes {
 }
 
 export const leftPopups: PopupDefinition[] = [
-  { name: PopupTypes.UI, render: () => <div>asdfas</div>, header: "UI Components" },
+  { name: PopupTypes.UI, render: () => <BuilderUI />, header: "UI Components" },
   { name: PopupTypes.Data, render: () => <div>Data</div>, header: "Data Components" },
 ];
 
@@ -28,15 +26,18 @@ export const rightPopups: PopupDefinition[] = [
 ];
 
 export default function Home() {
+  const handleDrop = (event: any) => {
+    console.log(event);
+  };
   return (
     <LayoutProvider>
       <div className="grid grid-cols-1fr-auto w-screen h-screen overflow-hidden bg-slate-400">
-        {/* <BuilderProvider>
-            <Builder />
-          </BuilderProvider> */}
-        <div></div>
+        <BuilderProvider>
+          <Builder />
+        </BuilderProvider>
         <Sidebar name="left" init={leftPopups} />
       </div>
+      <div className="bg-red-500 w-20 h-20" onDrop={handleDrop}></div>
     </LayoutProvider>
   );
 }

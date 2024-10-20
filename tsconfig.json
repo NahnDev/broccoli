@@ -19,7 +19,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@builder/*": ["./src/libs/builder/*"]
+      "@builder/*": ["./src/libs/builder/*"],
+      "@dnd/*": ["./src/libs/dnd/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

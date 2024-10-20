@@ -49,14 +49,15 @@ function DropableZone(props: { name: string; horizontal?: boolean; onDrop: (item
     },
   });
 
-  useDndMonitor({
-    onDragEnd(event) {
-      if (event.over?.id === props.name) {
-        console.log("----", event.active);
-        props.onDrop(event.active.data.current?.payload as PopupDefinition);
-      }
-    },
-  });
+  // useDndMonitor({
+  //   onDragEnd(event) {
+  //     console.log(">>>", event);
+  //     if (event.over?.id === props.name) {
+  //       console.log("----", event.active);
+  //       props.onDrop(event.active.data.current?.payload as PopupDefinition);
+  //     }
+  //   },
+  // });
   return (
     <div>
       <div ref={setNodeRef} className={clsx(["marker -z-0", isOver && "border-2 border-cyan-700"])}></div>
