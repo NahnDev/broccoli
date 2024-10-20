@@ -1,10 +1,10 @@
+import clsx from "clsx";
 import { Popup } from "./Popup";
 import { DndTypes } from "./constants";
 import { useEffect } from "react";
 import { PopupDefinition } from "./types/PopupDefinition";
-import clsx from "clsx";
-import { useSidebarComponents, useSidebarHandlers } from "./contexts/SidebarHooks";
-import { useDndMonitor, useDroppable } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
+import useSidebarStore from "./stores/sidebar";
 
 export type SidebarProps = {
   hidden?: boolean;
@@ -14,11 +14,11 @@ export type SidebarProps = {
 };
 
 export function Sidebar(props: SidebarProps) {
-  const definitions = useSidebarComponents(props.name);
-  const { register } = useSidebarHandlers(props.name);
+  const definitions = useSidebarStore((state) => state.value[props.name] || []);
+  const register = useSidebarStore((state) => state.register);
 
-  const onDrop = (item: any) => register(item);
-  useEffect(() => props.init?.forEach((v) => register(v)), []);
+  const onDrop = (item: any) => register(props.name, item);
+  useEffect(() => props.init?.forEach((v) => register(props.name, v)), []);
 
   return (
     <div
@@ -49,15 +49,6 @@ function DropableZone(props: { name: string; horizontal?: boolean; onDrop: (item
     },
   });
 
-  // useDndMonitor({
-  //   onDragEnd(event) {
-  //     console.log(">>>", event);
-  //     if (event.over?.id === props.name) {
-  //       console.log("----", event.active);
-  //       props.onDrop(event.active.data.current?.payload as PopupDefinition);
-  //     }
-  //   },
-  // });
   return (
     <div>
       <div ref={setNodeRef} className={clsx(["marker -z-0", isOver && "border-2 border-cyan-700"])}></div>

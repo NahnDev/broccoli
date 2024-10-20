@@ -2,17 +2,15 @@ import React, { forwardRef, useMemo } from "react";
 import clsx from "clsx";
 import useDragPopup from "./hooks/useDragPopup";
 import PopupDefinition from "./types/PopupDefinition";
-import { usePopupPosition, usePopupCoord, usePopupHandler, usePopupShown } from "./contexts/PopupHooks";
 import PopupPosition from "./types/PopupPosition";
 import IconButton from "./components/IconButton";
 import { faChevronDown, faChevronRight, faCompress } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CSS } from "@dnd-kit/utilities";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
-import { useDndMonitor } from "@dnd-kit/core";
 import { DndTypes } from "./constants";
-import useDrop from "@/libs/dnd/useDndDrop";
 import useDragEnd from "@/libs/dnd/useDragEnd";
+import { usePopupCoord, usePopupPosition, usePopupShown } from "./stores/popup";
 
 export type PopupProps = {
   item: PopupDefinition;
@@ -20,11 +18,11 @@ export type PopupProps = {
 };
 
 export function Popup(props: PopupProps) {
-  const isFloating = usePopupPosition(props.item.name) === PopupPosition.Floating;
-  const expand = usePopupShown(props.item.name);
-  const coord = usePopupCoord(props.item.name);
+  const [coord, setCoord] = usePopupCoord(props.item.name);
+  const [shown, setShown] = usePopupShown(props.item.name);
+  const [position, setPosition] = usePopupPosition(props.item.name);
+  const isFloating = useMemo(() => position === PopupPosition.Floating, [position]);
 
-  const { setCoord, setPosition, hide, show } = usePopupHandler(props.item.name);
   const { isDragging, setNodeRef, attributes, listeners, transform, activeNodeRect } = useDragPopup(props.item);
 
   const children = useMemo(() => props.item.render(), []);
@@ -49,8 +47,8 @@ export function Popup(props: PopupProps) {
       className={clsx([
         "grid",
         isDragging && "h-0 z-50",
-        expand && !isFloating ? "h-full" : "h-min",
-        expand && horizontal ? "w-full" : "w-min",
+        shown && !isFloating ? "h-full" : "h-min",
+        shown && horizontal ? "w-full" : "w-min",
       ])}
     >
       <div className={clsx("grid", isFloating && "fixed")} style={isFloating ? { ...coord } : {}}>
@@ -59,14 +57,14 @@ export function Popup(props: PopupProps) {
             <PopupTitle
               ref={setNodeRef}
               title={props.item.header ?? ""}
-              expand={expand}
+              shown={shown}
               floating={isFloating}
               horizontal={horizontal}
-              onClick={expand ? hide : show}
+              onClick={() => setShown(!shown)}
               onCompressClick={() => setPosition(PopupPosition.Relative)}
               listeners={listeners}
             />
-            {expand && <div className="flex-1">{children}</div>}
+            {shown && <div className="flex-1">{children}</div>}
           </div>
         </div>
       </div>
@@ -76,7 +74,7 @@ export function Popup(props: PopupProps) {
 
 export type PopupTitleProps = {
   title: string;
-  expand: boolean;
+  shown: boolean;
   floating: boolean;
   horizontal?: boolean;
   onClick: () => void;
@@ -85,7 +83,7 @@ export type PopupTitleProps = {
 };
 
 const PopupTitle = forwardRef(function PopupTitle(props: PopupTitleProps, ref: React.Ref<HTMLDivElement>) {
-  const expand = useMemo(() => props.expand, [props.expand]);
+  const shown = useMemo(() => props.shown, [props.shown]);
   const title = useMemo(() => props.title, [props.title]);
 
   return (
@@ -93,16 +91,16 @@ const PopupTitle = forwardRef(function PopupTitle(props: PopupTitleProps, ref: R
       className={clsx([
         "flex flex-row items-center",
         "text-sm select-none",
-        props.horizontal && !expand && "vertical-text",
+        props.horizontal && !shown && "vertical-text",
       ])}
       onClick={props.onClick}
     >
       <div className={clsx(["relative ", "flex-1 flex flex-row items-center gap-2", " p-2 pl-4"])}>
         <div ref={ref} className={clsx("cursor-pointer overlay")} {...props.listeners} />
         {props.horizontal ? (
-          <FontAwesomeIcon className={clsx([expand && "rotate-180", "text-xs"])} icon={faChevronDown} />
+          <FontAwesomeIcon className={clsx([shown && "rotate-180", "text-xs"])} icon={faChevronDown} />
         ) : (
-          <FontAwesomeIcon className={clsx([expand && "rotate-90", "text-xs"])} icon={faChevronRight} />
+          <FontAwesomeIcon className={clsx([shown && "rotate-90", "text-xs"])} icon={faChevronRight} />
         )}
         <div className=" flex-1">
           <span className="select-none font-semibold text-slate-700 px-2">{title}</span>

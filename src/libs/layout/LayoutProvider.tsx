@@ -1,7 +1,6 @@
 import { PropsWithChildren } from "react";
-import PopupProvider from "./contexts/PopupProvider";
-import SidebarProvider from "./contexts/SidebarProvider";
-import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+
+import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
 
 export function LayoutProvider(props: PropsWithChildren) {
   const mouseSensor = useSensor(MouseSensor, {
@@ -13,11 +12,5 @@ export function LayoutProvider(props: PropsWithChildren) {
 
   const sensors = useSensors(mouseSensor);
 
-  return (
-    <DndContext sensors={sensors}>
-      <PopupProvider>
-        <SidebarProvider>{props.children}</SidebarProvider>
-      </PopupProvider>
-    </DndContext>
-  );
+  return <DndContext sensors={sensors}>{props.children}</DndContext>;
 }

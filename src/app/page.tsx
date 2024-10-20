@@ -26,18 +26,15 @@ export const rightPopups: PopupDefinition[] = [
 ];
 
 export default function Home() {
-  const handleDrop = (event: any) => {
-    console.log(event);
-  };
   return (
     <LayoutProvider>
-      <div className="grid grid-cols-1fr-auto w-screen h-screen overflow-hidden bg-slate-400">
+      <div className="grid grid-cols-auto-1fr-auto w-screen h-screen overflow-hidden bg-slate-400">
+        <Sidebar name="right" init={rightPopups} />
         <BuilderProvider>
           <Builder />
         </BuilderProvider>
         <Sidebar name="left" init={leftPopups} />
       </div>
-      <div className="bg-red-500 w-20 h-20" onDrop={handleDrop}></div>
     </LayoutProvider>
   );
 }
