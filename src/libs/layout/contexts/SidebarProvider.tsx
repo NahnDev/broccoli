@@ -19,6 +19,7 @@ export default function SidebarProvider(props: React.PropsWithChildren) {
       });
       return nextState.set(name, { components: [...value.components, component] });
     });
+    console.log("run function");
     setPosition(component.name, PopupPosition.Relative);
   }, []);
 

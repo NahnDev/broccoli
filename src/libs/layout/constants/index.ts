@@ -3,6 +3,7 @@ import PopupState from "../types/PopupState";
 
 export enum DndTypes {
   Popup = "popup",
+  Sidebar = "sidebar",
 }
 
 export const POPUP_INITIAL_STATE: PopupState = {

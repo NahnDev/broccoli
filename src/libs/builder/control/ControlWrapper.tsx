@@ -19,24 +19,33 @@ export default function ControlWrapper(props: ControlProps) {
   const Components = UI[ControlType.ShortText];
   const remove = useControlDeleteHanlder();
 
-  const [{ isDragging }, dragRef, preview] = useDrag({
-    type: "abc",
+  const [{ isDragging, xy }, dragRef] = useDrag({
+    type: DndTypes.Control,
     item: props.control,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
+      xy: monitor.getClientOffset(),
     }),
+    end: (item, monitor) => {
+      console.log("end", monitor.didDrop());
+      if (monitor.didDrop()) {
+        // remove(item);
+      }
+    },
   });
+
+  console.log(xy);
 
   const [selected, setSelected] = useControlSelected();
   const isSelected = useMemo(() => props.control.id === selected?.id, [props, selected]);
 
-  const handleDelete = useControlDeleteHanlder();
-  useHotkeys("delete", () => (isSelected ? handleDelete(selected!) : undefined));
-  useHotkeys("backspace", () => (isSelected ? handleDelete(selected!) : undefined));
+  // const handleDelete = useControlDeleteHanlder();
+  // useHotkeys("delete", () => (isSelected ? handleDelete(selected!) : undefined));
+  // useHotkeys("backspace", () => (isSelected ? handleDelete(selected!) : undefined));
 
-  useEffect(() => {
-    if (isDragging) remove(props.control);
-  }, [isDragging]);
+  // useEffect(() => {
+  //   if (isDragging) remove(props.control);
+  // }, [isDragging]);
 
   // useEffect(() => {
   //   preview(getEmptyImage());
@@ -53,11 +62,6 @@ export default function ControlWrapper(props: ControlProps) {
       //   "bg-white blur-0 opacity-100",
       //   "fixed",
       // ])}
-      style={{
-        position: "relative",
-        top: 0,
-        left: 0,
-      }}
     >
       <div className={clsx(["w-full h-full", "pointer-events-none select-none"])}>
         <Components {...props} />

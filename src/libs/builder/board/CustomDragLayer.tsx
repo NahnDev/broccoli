@@ -1,7 +1,6 @@
 import { useDragLayer } from "react-dnd";
 import ControlWrapper from "../control/ControlWrapper";
 import { DndTypes } from "../constants/dnd";
-
 // Custom Drag Layer component
 export const CustomDragLayer = () => {
   const { item, isDragging, currentOffset, type } = useDragLayer((monitor) => ({
@@ -11,7 +10,7 @@ export const CustomDragLayer = () => {
     currentOffset: monitor.getSourceClientOffset(),
   }));
 
-  if (!isDragging || !currentOffset || type !== "abc") {
+  if (!isDragging || !currentOffset || type !== DndTypes.Control) {
     return <></>;
   }
 

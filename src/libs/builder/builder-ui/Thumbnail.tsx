@@ -9,7 +9,7 @@ type ThumbnailProps = Readonly<{ type: ControlType }>;
 
 export default function Thumbnail(props: ThumbnailProps) {
   const { icon, label } = useMemo(() => THUMBNAILS[props.type], [props]);
-  const [, dragRef] = useDrag({ type: DndTypes.Control, item: { type: props.type } });
+  const [, dragRef] = useDrag({ type: DndTypes.Thumbnail, item: { type: props.type } });
 
   return (
     <div className="relative">

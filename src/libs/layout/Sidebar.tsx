@@ -1,10 +1,10 @@
-import { useDrop } from "react-dnd";
 import { Popup } from "./Popup";
 import { DndTypes } from "./constants";
 import { useEffect } from "react";
 import { PopupDefinition } from "./types/PopupDefinition";
 import clsx from "clsx";
 import { useSidebarComponents, useSidebarHandlers } from "./contexts/SidebarHooks";
+import { useDndMonitor, useDroppable } from "@dnd-kit/core";
 
 export type SidebarProps = {
   hidden?: boolean;
@@ -28,7 +28,7 @@ export function Sidebar(props: SidebarProps) {
         props.hidden && "w-0 overflow-hidden",
       ])}
     >
-      <DropableZone onDrop={onDrop} horizontal={props.horizontal} />
+      <DropableZone name={props.name} onDrop={onDrop} horizontal={props.horizontal} />
       <div className="grid  border-2 border-slate-100 rounded-sm">
         <div className={clsx(["flex gap-1", props.horizontal ? "flex-row" : "flex-col"])}>
           {definitions.map((definition) => (
@@ -40,22 +40,26 @@ export function Sidebar(props: SidebarProps) {
   );
 }
 
-function DropableZone(props: { horizontal?: boolean; onDrop: (item: any) => void }) {
-  const [{ isOver }, dropRef] = useDrop({
-    accept: DndTypes.Popup,
-    canDrop: () => true,
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: true,
-    }),
-    drop(item) {
-      props.onDrop(item);
+function DropableZone(props: { name: string; horizontal?: boolean; onDrop: (item: any) => void }) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: props.name,
+    data: {
+      type: DndTypes.Sidebar,
+      accepts: [DndTypes.Sidebar],
     },
   });
 
+  useDndMonitor({
+    onDragEnd(event) {
+      if (event.over?.id === props.name) {
+        console.log("----", event.active);
+        props.onDrop(event.active.data.current?.payload as PopupDefinition);
+      }
+    },
+  });
   return (
     <div>
-      <div ref={dropRef as any} className={clsx(["marker -z-0", isOver && "border-2 border-cyan-700"])}></div>
+      <div ref={setNodeRef} className={clsx(["marker -z-0", isOver && "border-2 border-cyan-700"])}></div>
       {isOver &&
         (props.horizontal ? <div className="h-80 w-0 max-w-0"></div> : <div className="w-80  h-0 max-h-0"></div>)}
     </div>

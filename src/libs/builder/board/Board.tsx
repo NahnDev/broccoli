@@ -16,20 +16,23 @@ import { CustomDragLayer } from "./CustomDragLayer";
 const GridLayout = WidthProvider(ReactGridLayout);
 
 function useControlDragLayer() {
-  const { type, isDragging } = useDragLayer((monitor) => ({
-    type: monitor.getItemType() === DndTypes.Control ? monitor.getItem()?.type : undefined,
-    isDragging: monitor.getItemType() === DndTypes.Control && monitor.isDragging(),
-  }));
-  const item = useMemo(() => {
-    if (!type) return undefined;
-    return new ControlBuilder().setType(type).build();
-  }, [type]);
-  return { item, isDragging };
+  const { type, payload } = useDragLayer((monitor) => ({ type: monitor.getItemType(), payload: monitor.getItem() }));
+  return useMemo(() => {
+    switch (type) {
+      case DndTypes.Thumbnail:
+        return new ControlBuilder().setType(payload.type).build();
+      case DndTypes.Control:
+        return payload;
+      default:
+        return null;
+    }
+  }, [type, payload]);
 }
 
 export function Board() {
   const ref = useRef<HTMLDivElement>(null);
-  const { item, isDragging } = useControlDragLayer();
+  const item = useControlDragLayer();
+  const isDragging = useMemo(() => !!item, [item]);
 
   const [controls, { set: setControl }] = useControls();
   const [layouts, setLayouts] = useLayouts();
@@ -41,7 +44,6 @@ export function Board() {
 
   const handleDrop = (layouts: ReactGridLayout.Layout[], layout: ReactGridLayout.Layout) => {
     if (item) {
-      console.log("item", item);
       setControl(ControlFn.setLayout(item, layout), layouts);
     }
   };
@@ -59,7 +61,7 @@ export function Board() {
         rowHeight={50}
         margin={[2, 2]}
         containerPadding={[10, 10]}
-        isDroppable={isDragging}
+        isDroppable={true}
         isDraggable={false}
         isResizable={!isDragging}
         resizeHandles={["se", "ne", "sw", "nw"]}

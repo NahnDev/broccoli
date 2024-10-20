@@ -5,7 +5,7 @@ import RectCoord from "../types/RectCoord";
 import PopupState from "../types/PopupState";
 
 export function usePopupValue(name: string) {
-  return useContext(PopupContext).value.get(name) ?? POPUP_INITIAL_STATE;
+  return useContext(PopupContext).value[name] ?? POPUP_INITIAL_STATE;
 }
 
 export function usePopupCoord(name: string) {
@@ -20,11 +20,12 @@ export function usePopupPosition(name: string) {
 }
 
 export function usePopupHandler(name: string) {
-  const { show, hide, setCoord, setPosition } = useContext(PopupContext);
+  const { show, hide, setCoord, setPosition, update } = useContext(PopupContext);
   return {
     show: () => show(name),
     hide: () => hide(name),
     setPosition: (position: PopupState["position"]) => setPosition(name, position),
     setCoord: (coord: RectCoord) => setCoord(name, coord),
+    update: (value: Partial<PopupState>) => update(name, value),
   };
 }

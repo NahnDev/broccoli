@@ -6,6 +6,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { BuilderProvider, Builder } from "@/libs/builder";
 import { BuilderUI } from "@builder/builder-ui";
+import { DndContext } from "@dnd-kit/core";
 
 export enum PopupTypes {
   UI = "ui",
@@ -16,7 +17,7 @@ export enum PopupTypes {
 }
 
 export const leftPopups: PopupDefinition[] = [
-  { name: PopupTypes.UI, render: () => <BuilderUI />, header: "UI Components" },
+  { name: PopupTypes.UI, render: () => <div>asdfas</div>, header: "UI Components" },
   { name: PopupTypes.Data, render: () => <div>Data</div>, header: "Data Components" },
 ];
 
@@ -28,18 +29,14 @@ export const rightPopups: PopupDefinition[] = [
 
 export default function Home() {
   return (
-    <DndProvider backend={HTML5Backend} options={{ enableMouseEvents: true }}>
-      <LayoutProvider>
-        <div className="grid grid-cols-1fr-auto w-screen h-screen overflow-hidden bg-slate-400">
-          <BuilderProvider>
-            <div className="grid grid-rows-2 gap-2">
-              <Builder />
-              {/* <Builder /> */}
-            </div>
-          </BuilderProvider>
-          <Sidebar name="left" init={leftPopups} />
-        </div>
-      </LayoutProvider>
-    </DndProvider>
+    <LayoutProvider>
+      <div className="grid grid-cols-1fr-auto w-screen h-screen overflow-hidden bg-slate-400">
+        {/* <BuilderProvider>
+            <Builder />
+          </BuilderProvider> */}
+        <div></div>
+        <Sidebar name="left" init={leftPopups} />
+      </div>
+    </LayoutProvider>
   );
 }

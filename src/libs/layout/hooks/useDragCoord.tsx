@@ -1,9 +1,11 @@
-import { DragLayerMonitor, useDragLayer } from "react-dnd";
-import { DndTypes } from "../constants";
+import { useDraggable } from "@dnd-kit/core";
 
 export function useDragCoord(name: string) {
-  const isAccept = (monitor: DragLayerMonitor<any>) => {
-    return monitor.getItemType() === DndTypes.Popup && monitor.getItem().name === name;
-  };
-  return useDragLayer((monitor) => (isAccept(monitor) ? monitor.getClientOffset() : undefined));
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: name,
+  });
+
+  const clientOffset = transform ? { x: transform.x, y: transform.y } : undefined;
+
+  return { attributes, listeners, setNodeRef, clientOffset };
 }
